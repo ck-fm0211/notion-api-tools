@@ -18,7 +18,10 @@ def _get_page_info(target_url):
     # Webページ取得
     response = requests.get(target_url)
     # スクレイピング
-    html = lxml.html.fromstring(response.content.decode('utf_8'))
+    try:
+        html = lxml.html.fromstring(response.content.decode('utf_8'))
+    except UnicodeDecodeError as e:
+        html = lxml.html.fromstring(response.content.decode('shift-jis'))
 
     # ページタイトルを取得
     try:
