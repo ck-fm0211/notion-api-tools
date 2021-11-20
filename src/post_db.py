@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 import json
 import argparse
 import requests
 import lxml.html
 import os
 import validators
+import datetime
 
 
 NOTION_API_URL = 'https://api.notion.com/v1/pages'
@@ -16,7 +18,7 @@ def _get_page_info(target_url):
     # Webページ取得
     response = requests.get(target_url)
     # スクレイピング
-    html = lxml.html.fromstring(response.content)
+    html = lxml.html.fromstring(response.content.decode('utf_8'))
 
     # ページタイトルを取得
     try:
@@ -37,8 +39,8 @@ def post_content(url, page_title, token, database_id):
 
     data = json.dumps(
         {
-        "parent": { "database_id": database_id},
-        "properties": {
+            "parent": { "database_id": database_id},
+            "properties": {
                 "Name": {
                     "title": [
                         {"text":
@@ -52,8 +54,15 @@ def post_content(url, page_title, token, database_id):
                     ]
             },
             "URL": {
-                    "url": url
+                "url": url
+            },
+            "Date": {
+                "date": {
+                    "start": datetime.datetime.now().strftime('%Y-%m-%d'),
+                    "end": None
                 }
+            }
+
             }
         }
     )
